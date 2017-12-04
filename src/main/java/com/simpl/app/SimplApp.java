@@ -3,6 +3,7 @@ package com.simpl.app;
 import com.simpl.app.config.ApplicationProperties;
 import com.simpl.app.config.DefaultProfileUtil;
 
+import com.simpl.app.service.BlockService;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.slf4j.Logger;
@@ -17,10 +18,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
@@ -31,6 +34,9 @@ public class SimplApp {
     private static final Logger log = LoggerFactory.getLogger(SimplApp.class);
 
     private final Environment env;
+
+    @Inject
+    private BlockService blockService;
 
     public SimplApp(Environment env) {
         this.env = env;
@@ -54,6 +60,11 @@ public class SimplApp {
             log.error("You have misconfigured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+
+        HashMap<String, Object> datas = new HashMap<>();
+        datas.put("integerValue", Integer.valueOf(1234));
+        datas.put("string", String.valueOf("Adding data to the chain"));
+        this.blockService.createBlock(datas);
     }
 
     /**
